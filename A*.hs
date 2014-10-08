@@ -1,4 +1,4 @@
-import qualified Data.Map as M
+import Data.List (find)
 
 type Puzzle = String
 type Score  = Int
@@ -14,6 +14,7 @@ data Node = Node { puzzle :: Puzzle,
                    fScore :: Score,
                    prev   :: Puzzle
                  }
+            deriving (Show)
 
 goal :: Puzzle
 goal = "12345678_"
@@ -43,7 +44,29 @@ expand :: Node -> [Node] -> [Node]
 expand node closed = undefined
 
 visit :: [Node] -> [Node] -> [Node]
-visit new old = undefined
+visit [] open = open
+visit (n:ns) open
+    | isNewNeighbor     = visit ns (n:open)
+    | isCheaperNeighbor = visit ns (replace n open)
+    | otherwise         = visit ns open
+    where
+        isNewNeighbor     = not (n `nodeElem` open)
+        isCheaperNeighbor = gScore n < gScore dupN
+        Just dupN         = find (nodeEq n) open
+
+replace :: Node -> [Node] -> [Node]
+replace new (x:xs)
+    | new `nodeEq` x = new : xs
+    | otherwise      = x : replace new xs
+
+nodeElem :: Node -> [Node] -> Bool
+nodeElem node [] = False
+nodeElem node (n:ns)
+    | nodeEq node n = True
+    | otherwise     = nodeElem node ns
+
+nodeEq :: Node -> Node -> Bool
+nodeEq m n = puzzle m == puzzle n
 
 append :: Node -> [Node] -> [Node]
 append node nodes = undefined
