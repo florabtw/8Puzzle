@@ -1,23 +1,5 @@
+import EightPuzzle (Node(..), Step, goal, nodeElem, nodeEq)
 import Data.List (find)
-
-type Puzzle = String
-type Score  = Int
-
-data Step = MoveLeft
-          | MoveUp
-          | MoveRight
-          | MoveDown
-          deriving (Show)
-
-data Node = Node { puzzle :: Puzzle,
-                   gScore :: Score,
-                   fScore :: Score,
-                   prev   :: Puzzle
-                 }
-            deriving (Show)
-
-goal :: Puzzle
-goal = "12345678_"
 
 aStar :: [Node] -> [Node] -> [Step]
 aStar open closed
@@ -58,15 +40,6 @@ replace :: Node -> [Node] -> [Node]
 replace new (x:xs)
     | new `nodeEq` x = new : xs
     | otherwise      = x : replace new xs
-
-nodeElem :: Node -> [Node] -> Bool
-nodeElem node [] = False
-nodeElem node (n:ns)
-    | nodeEq node n = True
-    | otherwise     = nodeElem node ns
-
-nodeEq :: Node -> Node -> Bool
-nodeEq m n = puzzle m == puzzle n
 
 append :: Node -> [Node] -> [Node]
 append node nodes = undefined
