@@ -15,10 +15,13 @@ import Data.List (find, minimumBy, delete)
 import Data.Ord (comparing)
 import Data.Maybe (catMaybes)
 
+type Puzzle = String
+
 solve :: Puzzle -> [Step]
 solve puzzle = aStar [initPuzzle puzzle] []
 
 aStar :: [Node] -> [Node] -> [Step]
+aStar [] _ = error "Unsolveable puzzle."
 aStar open closed
     | isGoal    = stepsTaken current
     | otherwise = aStar open'' closed'
