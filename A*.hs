@@ -1,9 +1,9 @@
-import EightPuzzle (Node(..), Step, goal, nodeElem, nodeEq)
+import EightPuzzle (Node(..), Step, goal, nodeElem, nodeEq, stepsTaken)
 import Data.List (find)
 
 aStar :: [Node] -> [Node] -> [Step]
 aStar open closed
-    | isGoal    = buildPath open closed current
+    | isGoal    = stepsTaken current
     | otherwise = aStar open'' closed'
     where
         isGoal    = puzzle current == goal
@@ -12,9 +12,6 @@ aStar open closed
         neighbors = expand current closed
         open''    = visit neighbors open'
         closed'   = append current closed
-
-buildPath :: [Node] -> [Node] -> Node -> [Step]
-buildPath = undefined
 
 cheapest :: [Node] -> Node
 cheapest nodes = undefined
@@ -39,7 +36,7 @@ visit (n:ns) open
 replace :: Node -> [Node] -> [Node]
 replace new (x:xs)
     | new `nodeEq` x = new : xs
-    | otherwise      = x : replace new xs
+    | otherwise      = x   : replace new xs
 
 append :: Node -> [Node] -> [Node]
 append node nodes = undefined
