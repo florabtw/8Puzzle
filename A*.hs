@@ -10,7 +10,8 @@ import EightPuzzle
     , moveRight
     , moveDown
     )
-import Data.List (find)
+import Data.List (find, minimumBy)
+import Data.Ord (comparing)
 import Data.Maybe (catMaybes)
 
 aStar :: [Node] -> [Node] -> [Step]
@@ -26,7 +27,7 @@ aStar open closed
         closed'   = append current closed
 
 cheapest :: [Node] -> Node
-cheapest nodes = undefined
+cheapest = minimumBy (comparing fScore)
 
 remove :: Node -> [Node] -> [Node]
 remove item ns = undefined
