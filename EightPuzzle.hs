@@ -5,9 +5,14 @@ module EightPuzzle
 , nodeElem
 , nodeEq
 , stepsTaken
+, moveLeft
+, moveUp
+, moveRight
+, moveDown
 ) where
 
 import Data.List (elemIndex)
+import Data.Maybe (fromJust)
 
 type Puzzle = String
 type Score  = Int
@@ -60,7 +65,61 @@ stepTaken from to
         isIncreasingIndex = blankIndex from < blankIndex to
 
 blankIndex :: Puzzle -> Int
-blankIndex puzzle =
-    case elemIndex '_' puzzle of
-        Just index -> index
-        Nothing    -> error "Invalid puzzle."
+blankIndex puzzle = fromJust $ elemIndex '_' puzzle
+
+-- Manhattan distance to goal position from current index
+distanceToGoal :: Puzzle -> Int -> Int
+distanceToGoal puzzle i =
+    let goalI   = fromJust $ elemIndex (puzzle !! i) goal
+        goalRow = goalI `div` 3
+        goalCol = goalI `mod` 3
+        currRow = i `div` 3
+        currCol = i `mod` 3
+    in  abs (goalRow - currRow) + abs (goalCol - currCol)
+
+swap :: Eq a => a -> a -> [a] -> [a]
+swap _ _ [] = []
+swap a b (x:xs)
+    | x == a    = b : swap a b xs
+    | x == b    = a : swap a b xs
+    | otherwise = x : swap a b xs
+
+moveLeft ::  Node -> Maybe Node
+moveLeft = move movePuzzleLeft
+
+moveUp ::  Node -> Maybe Node
+moveUp = move movePuzzleUp
+
+moveRight ::  Node -> Maybe Node
+moveRight = move movePuzzleRight
+
+moveDown ::  Node -> Maybe Node
+moveDown = move movePuzzleDown
+
+move ::  (Puzzle -> Maybe Puzzle) -> Node -> Maybe Node
+move f node = do
+    puzzle' <- f (puzzle node)
+    let gScore' = gScore node + 1
+        hScore  = sum $ map (distanceToGoal puzzle') [0..8]
+        fScore' = gScore' +  hScore
+    return $ Node puzzle' gScore' fScore' node
+
+movePuzzleLeft ::  Puzzle -> Maybe Puzzle
+movePuzzleLeft = movePuzzle mod 0 (-) 1
+
+movePuzzleUp ::  Puzzle -> Maybe Puzzle
+movePuzzleUp = movePuzzle div 0 (-) 3
+
+movePuzzleRight ::  Puzzle -> Maybe Puzzle
+movePuzzleRight = movePuzzle mod 2 (+) 1
+
+movePuzzleDown ::  Puzzle -> Maybe Puzzle
+movePuzzleDown = movePuzzle div 2 (+) 3
+
+movePuzzle :: (Int -> Int -> Int) -> Int -> (Int -> Int -> Int) -> Int -> Puzzle -> Maybe Puzzle
+movePuzzle checkOp checkBound applyOp applyBound puzzle
+    | canMoveRight = Just $ swap '_' neighbor puzzle
+    | otherwise    = Nothing
+    where
+        canMoveRight = blankIndex puzzle `checkOp` 3 /= checkBound
+        neighbor     = puzzle !! (blankIndex puzzle `applyOp` applyBound)

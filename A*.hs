@@ -1,5 +1,17 @@
-import EightPuzzle (Node(..), Step, goal, nodeElem, nodeEq, stepsTaken)
+import EightPuzzle
+    ( Node(..)
+    , Step
+    , goal
+    , nodeElem
+    , nodeEq
+    , stepsTaken
+    , moveLeft
+    , moveUp
+    , moveRight
+    , moveDown
+    )
 import Data.List (find)
+import Data.Maybe (catMaybes)
 
 aStar :: [Node] -> [Node] -> [Step]
 aStar open closed
@@ -19,8 +31,11 @@ cheapest nodes = undefined
 remove :: Node -> [Node] -> [Node]
 remove item ns = undefined
 
+-- Expand all neighbor nodes to node that are not already in closed
 expand :: Node -> [Node] -> [Node]
-expand node closed = undefined
+expand node closed =
+    let neighbors = map ($ node) [moveLeft, moveUp, moveRight, moveDown]
+    in  filter (not . flip nodeElem closed) (catMaybes neighbors)
 
 visit :: [Node] -> [Node] -> [Node]
 visit [] open = open
