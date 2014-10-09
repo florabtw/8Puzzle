@@ -1,3 +1,5 @@
+module AStar (solve) where
+
 import EightPuzzle
     ( Node(..)
     , Step
