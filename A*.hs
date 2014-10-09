@@ -10,7 +10,7 @@ import EightPuzzle
     , moveRight
     , moveDown
     )
-import Data.List (find, minimumBy)
+import Data.List (find, minimumBy, delete)
 import Data.Ord (comparing)
 import Data.Maybe (catMaybes)
 
@@ -21,16 +21,13 @@ aStar open closed
     where
         isGoal    = puzzle current == goal
         current   = cheapest open
-        open'     = remove current open
+        open'     = delete current open
         neighbors = expand current closed
         open''    = visit neighbors open'
         closed'   = append current closed
 
 cheapest :: [Node] -> Node
 cheapest = minimumBy (comparing fScore)
-
-remove :: Node -> [Node] -> [Node]
-remove item ns = undefined
 
 -- Expand all neighbor nodes to node that are not already in closed
 expand :: Node -> [Node] -> [Node]
