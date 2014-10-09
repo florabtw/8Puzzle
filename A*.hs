@@ -24,7 +24,7 @@ aStar open closed
         open'     = delete current open
         neighbors = expand current closed
         open''    = visit neighbors open'
-        closed'   = append current closed
+        closed'   = current : closed
 
 cheapest :: [Node] -> Node
 cheapest = minimumBy (comparing fScore)
@@ -50,6 +50,3 @@ replace :: Node -> [Node] -> [Node]
 replace new (x:xs)
     | new `nodeEq` x = new : xs
     | otherwise      = x   : replace new xs
-
-append :: Node -> [Node] -> [Node]
-append node nodes = undefined
