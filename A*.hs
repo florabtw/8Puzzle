@@ -9,10 +9,14 @@ import EightPuzzle
     , moveUp
     , moveRight
     , moveDown
+    , initPuzzle
     )
 import Data.List (find, minimumBy, delete)
 import Data.Ord (comparing)
 import Data.Maybe (catMaybes)
+
+solve :: Puzzle -> [Step]
+solve puzzle = aStar [initPuzzle puzzle] []
 
 aStar :: [Node] -> [Node] -> [Step]
 aStar open closed

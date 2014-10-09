@@ -9,6 +9,7 @@ module EightPuzzle
 , moveUp
 , moveRight
 , moveDown
+, initPuzzle
 ) where
 
 import Data.List (elemIndex)
@@ -67,6 +68,9 @@ stepTaken from to
 blankIndex :: Puzzle -> Int
 blankIndex puzzle = fromJust $ elemIndex '_' puzzle
 
+distancesToGoal ::  Puzzle -> Int
+distancesToGoal puzzle' = sum $ map (distanceToGoal puzzle') [0..8]
+
 -- Manhattan distance to goal position from current index
 distanceToGoal :: Puzzle -> Int -> Int
 distanceToGoal puzzle i =
@@ -100,7 +104,7 @@ move ::  (Puzzle -> Maybe Puzzle) -> Node -> Maybe Node
 move f node = do
     puzzle' <- f (puzzle node)
     let gScore' = gScore node + 1
-        hScore  = sum $ map (distanceToGoal puzzle') [0..8]
+        hScore  = distancesToGoal puzzle'
         fScore' = gScore' +  hScore
     return $ Node puzzle' gScore' fScore' node
 
@@ -123,3 +127,10 @@ movePuzzle checkOp checkBound applyOp applyBound puzzle
     where
         canMoveRight = blankIndex puzzle `checkOp` 3 /= checkBound
         neighbor     = puzzle !! (blankIndex puzzle `applyOp` applyBound)
+
+initPuzzle :: Puzzle -> Node
+initPuzzle puzzle' =
+    let gScore' = 0
+        hScore  = distancesToGoal puzzle'
+        fScore' = gScore' + hScore
+    in  Node puzzle' gScore' fScore' Root
